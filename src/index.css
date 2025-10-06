@@ -2,6 +2,6 @@
 
 
 @theme{
-  --bg-hero: url('/assets/bg2.png');
-  --bg-fade: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8));
+  --font-roboto: "Roboto", sans-serif;
+  --bg-fade: linear-gradient(linear-gradient(to_bottom,transparent,rgba(255,255,255,1)));
 }

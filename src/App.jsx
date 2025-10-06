@@ -7,7 +7,7 @@ function App() {
     <>
       <Authentication/>
     </>
-  )
+  );
 }
 
 export default App
