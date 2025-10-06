@@ -1,12 +1,11 @@
-import { useState } from 'react'
-
+import Authentication from "./pages/authentication"
 
 function App() {
 
 
   return (
     <>
-      
+      <Authentication/>
     </>
   )
 }

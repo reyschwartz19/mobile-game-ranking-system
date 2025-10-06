@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+
+@theme{
+  --bg-hero: url('/assets/bg2.png');
+  --bg-fade: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8));
+}
