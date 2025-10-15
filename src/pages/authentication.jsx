@@ -1,8 +1,9 @@
 import bg1 from '../assets/bg1.jpg';
 import {Eye,EyeClosed } from 'lucide-react';
 import gIcon from '../assets/google-icon.svg';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { Await, useNavigate, useSearchParams } from 'react-router-dom';
+import { use, useState } from 'react';
+import { supabase } from '../supabse_client';
 
 const Authentication = () =>{
 
@@ -10,6 +11,47 @@ const Authentication = () =>{
     const navigate = useNavigate();
     const mode = searchParams.get("mode");
     const [showPassword,setShowPassword] = useState(false);
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+   
+    const [loading,setLoading] = useState(false);
+
+   const signUp = async (e) =>{
+    if(loading) return;
+      e.preventDefault();
+     setLoading(true);
+  
+
+     try{
+         const {error: signUpError, data: signUpData} =  await supabase.auth.signUp({email,password});
+         if(signUpError){
+            if(signUpError.message.includes('User already registered'))
+               {
+              try{
+                const{data: signInData, error: signInError} = await supabase.auth.signInWithPassword({email,password});
+                if(signInError){
+                  console.error('Log in failed:',signInError.message);
+                  return;
+                }else{
+                  console.log('Logged in existing user:', signInData.user)
+                }
+              }catch{
+                 console.log('Sign in: An unexpected error occurred')
+              }
+            }else{
+               console.error('SignUp failed:', signUpError.message);
+            }
+         }else{
+            console.log('New user signed up:', signUpData.user)
+         }
+     }
+     catch{
+          console.log('Sign Up: an unexpected Error occurred')
+     }
+    
+     setLoading(false);
+
+   }
  
 
    
@@ -58,9 +100,17 @@ const Authentication = () =>{
                         <div className='w-full'>
                             { mode === "signup" && (
                                 <form className='flex flex-col gap-4 w-full justify-center items-center'>
-                                    <input type='email' placeholder='Email' className='text-gray-900 w-[70%] outline-1 outline-black p-1.5 rounded-lg  ' />
+                                    <input 
+                                          type='email' 
+                                          placeholder='Email' 
+                                          className='text-gray-900 w-[70%] outline-1 outline-black p-1.5 rounded-lg  ' 
+                                          onChange={(e)=>setEmail(e.target.value)}/>
                                      <div className='w-[70%]  outline-black outline-1 rounded-lg flex items-center pr-1.5'>
-                                       <input type={showPassword? "text" : "password"} placeholder='Password' className='text-gray-900 w-full  p-1.5  outline-none' />
+                                       <input 
+                                             type={showPassword? "text" : "password"} 
+                                             placeholder='Password' 
+                                             className='text-gray-900 w-full  p-1.5  outline-none'
+                                             onChange={(e)=>setPassword(e.target.value)} />
                                        <button  type='button'
                                        onMouseDown={handlePressStart}
                                        onMouseUp={handlePressEnd}
@@ -76,7 +126,11 @@ const Authentication = () =>{
                                        }
                                        </button>
                                     </div>
-                                     <button className='bg-[#62b1ff] text-white rounded-lg h-[40px] w-[100px] cursor-pointer hover:bg-[#3b7ec2]'>Continue</button>
+                                     <button
+                                            className='bg-[#62b1ff] text-white rounded-lg h-[40px] w-[100px] cursor-pointer hover:bg-[#3b7ec2]'
+                                            onClick={signUp}>
+                                             {loading?'Logging In...':'Continue'}
+                                     </button>
                                       <div className='flex items-center gap-4 w-full my-2.5'>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                            <p>OR</p>
