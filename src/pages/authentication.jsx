@@ -1,57 +1,72 @@
 import bg1 from '../assets/bg1.jpg';
 import {Eye,EyeClosed } from 'lucide-react';
 import gIcon from '../assets/google-icon.svg';
-import { Await, useNavigate, useSearchParams } from 'react-router-dom';
-import { use, useState } from 'react';
+import { Await, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { supabase } from '../supabse_client';
 
 const Authentication = () =>{
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
+   //  const navigate = useNavigate();
     const mode = searchParams.get("mode");
     const [showPassword,setShowPassword] = useState(false);
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
-   
+    const [errorMessage,setErrorMessage] = useState('');
     const [loading,setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
-   const signUp = async (e) =>{
-    if(loading) return;
-      e.preventDefault();
-     setLoading(true);
+  const signUp = async (e) => {
+  e.preventDefault();
+  if (loading) return;
+  setErrorMessage('');
+  setLoading(true);
+  setSuccess(false);
+
+  try {
   
+    const { data: signUpdata, error: signUpError } = await supabase.auth.signUp({ email, password,options: {
+    emailRedirectTo: `${window.location.origin}/confirm`,
+  }, });
 
-     try{
-         const {error: signUpError, data: signUpData} =  await supabase.auth.signUp({email,password});
-         if(signUpError){
-            if(signUpError.message.includes('User already registered'))
-               {
-              try{
-                const{data: signInData, error: signInError} = await supabase.auth.signInWithPassword({email,password});
-                if(signInError){
-                  console.error('Log in failed:',signInError.message);
-                  return;
-                }else{
-                  console.log('Logged in existing user:', signInData.user)
-                }
-              }catch{
-                 console.log('Sign in: An unexpected error occurred')
-              }
-            }else{
-               console.error('SignUp failed:', signUpError.message);
-            }
-         }else{
-            console.log('New user signed up:', signUpData.user)
-         }
-     }
-     catch{
-          console.log('Sign Up: an unexpected Error occurred')
-     }
+    if (signUpError) {
+  
+      if (signUpError.message.includes("User already registered")) {
+        console.error(` User already exists: ${email}`);
+        setErrorMessage("User already exists. Please sign in instead.");
+        return;
+      }
+
+      console.error(" Unexpected sign-up error:", signUpError.message);
+     
+      setErrorMessage('sign up error:', signUpError.message);
+      return;
+    }
+
     
-     setLoading(false);
+    if (signUpdata?.user && !signUpdata.user.email_confirmed_at) {
+      console.log(` User registered and awaiting confirmation: ${email}`);
+      
+      // navigate(`/confirm?email=${encodeURIComponent(email)}`);
+      return;
+    }
 
-   }
+   
+    if (signUpdata?.user?.email_confirmed_at) {
+      console.warn(`User already confirmed: ${email}`);
+      
+      return;
+    }
+
+  } catch (err) {
+    console.error("Unexpected error during sign-up:", err.message);
+   
+  } finally {
+    setLoading(false);
+    setSuccess(true);
+  }
+};
  
 
    
@@ -131,6 +146,16 @@ const Authentication = () =>{
                                             onClick={signUp}>
                                              {loading?'Logging In...':'Continue'}
                                      </button>
+                                    { errorMessage !== ''? (<div className='flex items-center justify-center w-[70%]  border-red-500 border-2 rounded-lg p-2'>
+                                        <p>{errorMessage}</p>
+                                     </div>): ''}
+                                     {
+                                       success ? (
+                                        <div className='flex items-center justify-center w-[70%]  border-green-500 border-2 rounded-lg p-2'>
+                                        <p>Sign Up Successful! Please check your email to confirm your account and proceed to sign in.</p>
+                                     </div>
+                                       ) : ''
+                                     }
                                       <div className='flex items-center gap-4 w-full my-2.5'>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                            <p>OR</p>
