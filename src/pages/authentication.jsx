@@ -1,9 +1,10 @@
 import bg1 from '../assets/bg1.jpg';
 import {Eye,EyeClosed } from 'lucide-react';
 import gIcon from '../assets/google-icon.svg';
-import { Await, useSearchParams } from 'react-router-dom';
+import {  useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { supabase } from '../supabse_client';
+import { UserAuth } from '../context/Authcontext';
+
 
 const Authentication = () =>{
 
@@ -17,56 +18,96 @@ const Authentication = () =>{
     const [loading,setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-  const signUp = async (e) => {
-  e.preventDefault();
-  if (loading) return;
-  setErrorMessage('');
-  setLoading(true);
-  setSuccess(false);
+    const {session,signUp,signIn} = UserAuth();
+    console.log(session);
 
-  try {
-  
-    const { data: signUpdata, error: signUpError } = await supabase.auth.signUp({ email, password,options: {
-    emailRedirectTo: `${window.location.origin}/confirm`,
-  }, });
-
-    if (signUpError) {
-  
-      if (signUpError.message.includes("User already registered")) {
-        console.error(` User already exists: ${email}`);
-        setErrorMessage("User already exists. Please sign in instead.");
-        return;
+    const handleSignUp = async (e) =>{
+      e.preventDefault();
+      
+      setLoading(true);
+      setErrorMessage('');
+      try{
+        const result = await signUp(email,password,{emailRedirectTo: `${window.location.origin}/confirm`});
+        if(result.success){
+          setSuccess(true);
+        }
+      }catch(error){
+        setErrorMessage('Sign up failed. Please try again.',error);
+      }finally{
+        setLoading(false);
+        setErrorMessage('');
       }
-
-      console.error(" Unexpected sign-up error:", signUpError.message);
-     
-      setErrorMessage('sign up error:', signUpError.message);
-      return;
     }
+
+    const handleSignIn = async (e) =>{
+      e.preventDefault();
+      setLoading(true);
+      setErrorMessage('');
+      try{
+        const result = await signIn(email,password);
+        if(result.success){
+          console.log('Sign in successful');
+        }else{
+          setErrorMessage('Sign in failed');
+        }
+      }catch(error){
+        setErrorMessage('Sign in failed. Please try again.',error);
+      }finally{
+        setLoading(false);
+        setErrorMessage('');
+      }
+    }
+
+//   const signUp = async (e) => {
+//   e.preventDefault();
+//   if (loading) return;
+//   setErrorMessage('');
+//   setLoading(true);
+//   setSuccess(false);
+
+//   try {
+  
+//     const { data: signUpdata, error: signUpError } = await supabase.auth.signUp({ email, password,options: {
+//     emailRedirectTo: `${window.location.origin}/confirm`,
+//   }, });
+
+//     if (signUpError) {
+  
+//       if (signUpError.message.includes("User already registered")) {
+//         console.error(` User already exists: ${email}`);
+//         setErrorMessage("User already exists. Please sign in instead.");
+//         return;
+//       }
+
+//       console.error(" Unexpected sign-up error:", signUpError.message);
+     
+//       setErrorMessage('sign up error:', signUpError.message);
+//       return;
+//     }
 
     
-    if (signUpdata?.user && !signUpdata.user.email_confirmed_at) {
-      console.log(` User registered and awaiting confirmation: ${email}`);
+//     if (signUpdata?.user && !signUpdata.user.email_confirmed_at) {
+//       console.log(` User registered and awaiting confirmation: ${email}`);
       
-      // navigate(`/confirm?email=${encodeURIComponent(email)}`);
-      return;
-    }
+//       // navigate(`/confirm?email=${encodeURIComponent(email)}`);
+//       return;
+//     }
 
    
-    if (signUpdata?.user?.email_confirmed_at) {
-      console.warn(`User already confirmed: ${email}`);
+//     if (signUpdata?.user?.email_confirmed_at) {
+//       console.warn(`User already confirmed: ${email}`);
       
-      return;
-    }
+//       return;
+//     }
 
-  } catch (err) {
-    console.error("Unexpected error during sign-up:", err.message);
+//   } catch (err) {
+//     console.error("Unexpected error during sign-up:", err.message);
    
-  } finally {
-    setLoading(false);
-    setSuccess(true);
-  }
-};
+//   } finally {
+//     setLoading(false);
+//     setSuccess(true);
+//   }
+// };
  
 
    
@@ -87,11 +128,11 @@ const Authentication = () =>{
                      sm:bg-none sm:w-[60%] sm:h-auto sm:bg-white/30 sm:backdrop-blur-md sm:border sm:border-white/20
                      md:w-[50%]
      `}>
-         <section className="w-full px-10">
-                    <p className="font-roboto text-5xl mb-1.5 text-gray-600 text-center">Match<span className="text-[#62b1ff]">Point</span></p>
-                    <p className="text-center text-2xl text-gray-800 mb-5">{showButtons? ('Leveling up the comps Scene'): ('Log in or sign up') }</p>
-                    <div className="flex flex-col justify-center w-full">
-                     { showButtons ? ( 
+        <section className="w-full px-10">
+            <p className="font-roboto text-5xl mb-1.5 text-gray-600 text-center">Match<span className="text-[#62b1ff]">Point</span></p>
+            <p className="text-center text-2xl text-gray-800 mb-5">{showButtons? ('Leveling up the comps Scene'): ('Log in or sign up') }</p>
+            <div className="flex flex-col justify-center w-full">
+                  { showButtons ? ( 
                         <div>
                             <button className="bg-[#62b1ff] text-white py-1.5 w-full h-[60px] my-2.5 rounded-lg text-2xl mb-5 cursor-pointer hover:bg-[#3b7ec2]"
                             onClick={()=> setSearchParams({mode: "signup"})}
@@ -143,8 +184,9 @@ const Authentication = () =>{
                                     </div>
                                      <button
                                             className='bg-[#62b1ff] text-white rounded-lg h-[40px] w-[100px] cursor-pointer hover:bg-[#3b7ec2]'
-                                            onClick={signUp}>
-                                             {loading?'Logging In...':'Continue'}
+                                            onClick={handleSignUp}
+                                            disabled={loading}>
+                                             {loading?'Signing Up...':'Continue'}
                                      </button>
                                     { errorMessage !== ''? (<div className='flex items-center justify-center w-[70%]  border-red-500 border-2 rounded-lg p-2'>
                                         <p>{errorMessage}</p>
@@ -152,10 +194,15 @@ const Authentication = () =>{
                                      {
                                        success ? (
                                         <div className='flex items-center justify-center w-[70%]  border-green-500 border-2 rounded-lg p-2'>
-                                        <p>Sign Up Successful! Please check your email to confirm your account and proceed to sign in.</p>
+                                        <p>Sign Up Successful! Please check your email to confirm your account and proceed to <span className='text-[#62b1ff] cursor-pointer'
+                                                                                                                              onClick={()=> setSearchParams({mode: "signin"})}
+                                                                                                                              >sign in</span>.</p>
                                      </div>
                                        ) : ''
                                      }
+                                     <div>Already Have an account? <span className='text-[#62b1ff] cursor-pointer'
+                                         onClick={()=> setSearchParams({mode: "signin"})}>
+                                      Sign In</span></div>
                                       <div className='flex items-center gap-4 w-full my-2.5'>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                            <p>OR</p>
@@ -191,7 +238,18 @@ const Authentication = () =>{
                                        }
                                        </button>
                                     </div>
-                                     <button className='bg-[#62b1ff] text-white rounded-lg h-[40px] w-[100px] cursor-pointer hover:bg-[#3b7ec2]'>Continue</button>
+                                      <button
+                                            className='bg-[#62b1ff] text-white rounded-lg h-[40px] w-[100px] cursor-pointer hover:bg-[#3b7ec2]'
+                                            onClick={handleSignIn}
+                                            disabled={loading}>
+                                             {loading?'Logging In...':'Continue'}
+                                     </button>
+                                    { errorMessage !== ''? (<div className='flex items-center justify-center w-[70%]  border-red-500 border-2 rounded-lg p-2'>
+                                        <p>{errorMessage}</p>
+                                     </div>): ''}
+                                     <div>Don't Have an account? <span className='text-[#62b1ff] cursor-pointer'
+                                         onClick={()=> setSearchParams({mode: "signup"})}>
+                                      Sign Up</span></div>
                                       <div className='flex items-center gap-4 w-full my-2.5'>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                            <p>OR</p>
@@ -209,8 +267,8 @@ const Authentication = () =>{
                     }
                     <p className='text-center text-gray-500'>By continuing, you are agreeing to our&nbsp;
                           <a href="#" className='text-gray-900'>Terms</a> & <a href="#" className='text-gray-900'>Privacy Policy</a></p>
-                    </div>
-                </section>
+                    </div>        
+                </section> 
      </div>
     </section>
    );
