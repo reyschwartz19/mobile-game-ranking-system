@@ -4,12 +4,12 @@ import gIcon from '../assets/google-icon.svg';
 import {  useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { UserAuth } from '../context/Authcontext';
-
+import { useNavigate } from 'react-router-dom';
 
 const Authentication = () =>{
 
     const [searchParams, setSearchParams] = useSearchParams();
-   //  const navigate = useNavigate();
+    const navigate = useNavigate();
     const mode = searchParams.get("mode");
     const [showPassword,setShowPassword] = useState(false);
     const [email,setEmail] = useState('');
@@ -19,7 +19,7 @@ const Authentication = () =>{
     const [success, setSuccess] = useState(false);
 
     const {session,signUp,signIn} = UserAuth();
-    console.log(session);
+   
 
     const handleSignUp = async (e) =>{
       e.preventDefault();
@@ -47,73 +47,21 @@ const Authentication = () =>{
         const result = await signIn(email,password);
         if(result.success){
           console.log('Sign in successful');
+          navigate('/dashboard');
         }else{
-          setErrorMessage('Sign in failed');
+          setErrorMessage('Sign in failed, please check your credentials and try again.');
+          console.log(errorMessage);
         }
       }catch(error){
-        setErrorMessage('Sign in failed. Please try again.',error);
+        setErrorMessage( error.message || 'Sign in failed. Please try again.' );
       }finally{
         setLoading(false);
-        setErrorMessage('');
-      }
+        
+      }   //old code didnt work like sign up because with sign in supabse throws an error that goes to the catch block but sign up returns a resolved promise even on failure
     }
 
-//   const signUp = async (e) => {
-//   e.preventDefault();
-//   if (loading) return;
-//   setErrorMessage('');
-//   setLoading(true);
-//   setSuccess(false);
-
-//   try {
-  
-//     const { data: signUpdata, error: signUpError } = await supabase.auth.signUp({ email, password,options: {
-//     emailRedirectTo: `${window.location.origin}/confirm`,
-//   }, });
-
-//     if (signUpError) {
-  
-//       if (signUpError.message.includes("User already registered")) {
-//         console.error(` User already exists: ${email}`);
-//         setErrorMessage("User already exists. Please sign in instead.");
-//         return;
-//       }
-
-//       console.error(" Unexpected sign-up error:", signUpError.message);
-     
-//       setErrorMessage('sign up error:', signUpError.message);
-//       return;
-//     }
-
-    
-//     if (signUpdata?.user && !signUpdata.user.email_confirmed_at) {
-//       console.log(` User registered and awaiting confirmation: ${email}`);
-      
-//       // navigate(`/confirm?email=${encodeURIComponent(email)}`);
-//       return;
-//     }
-
-   
-//     if (signUpdata?.user?.email_confirmed_at) {
-//       console.warn(`User already confirmed: ${email}`);
-      
-//       return;
-//     }
-
-//   } catch (err) {
-//     console.error("Unexpected error during sign-up:", err.message);
-   
-//   } finally {
-//     setLoading(false);
-//     setSuccess(true);
-//   }
-// };
- 
-
-   
-
     const handlePressStart = () =>{
-         setShowPassword(true);
+        setShowPassword(true);
     };
 
     const handlePressEnd = () =>{
@@ -122,12 +70,11 @@ const Authentication = () =>{
 
     const showButtons = !mode;
 
-   return(
+  return(
     <section className='flex items-center justify-center w-full h-screen bg-cover bg-center sm:py-4' style={{backgroundImage: `url(${bg1})`}}>
-     <div className={`flex ${showButtons ? 'items-baseline-last': 'items-center'} py-3 justify-center pb-6 w-full h-full bg-[linear-gradient(to_bottom,transparent,rgba(255,255,255,1))]
-                     sm:bg-none sm:w-[60%] sm:h-auto sm:bg-white/30 sm:backdrop-blur-md sm:border sm:border-white/20
-                     md:w-[50%]
-     `}>
+    <div className={`flex ${showButtons ? 'items-baseline-last': 'items-center'} py-3 justify-center pb-6 w-full h-full bg-[linear-gradient(to_bottom,transparent,rgba(255,255,255,1))]
+                    sm:bg-none sm:w-[60%] sm:h-auto sm:bg-white/30 sm:backdrop-blur-md sm:border sm:border-white/20
+                    md:w-[50%]`}>
         <section className="w-full px-10">
             <p className="font-roboto text-5xl mb-1.5 text-gray-600 text-center">Match<span className="text-[#62b1ff]">Point</span></p>
             <p className="text-center text-2xl text-gray-800 mb-5">{showButtons? ('Leveling up the comps Scene'): ('Log in or sign up') }</p>
@@ -165,6 +112,7 @@ const Authentication = () =>{
                                        <input 
                                              type={showPassword? "text" : "password"} 
                                              placeholder='Password' 
+                                             autoComplete='new-password'
                                              className='text-gray-900 w-full  p-1.5  outline-none'
                                              onChange={(e)=>setPassword(e.target.value)} />
                                        <button  type='button'
@@ -220,9 +168,16 @@ const Authentication = () =>{
                             {
                               mode === 'signin' && (
                                   <form className='flex flex-col gap-4 w-full justify-center items-center'>
-                                    <input type='email' placeholder='Email' className='text-gray-900 w-[70%] outline-1 outline-black p-1.5 rounded-lg  ' />
+                                    <input type='email' 
+                                           placeholder='Email' 
+                                           onChange={(e)=>setEmail(e.target.value)}
+                                           className='text-gray-900 w-[70%] outline-1 outline-black p-1.5 rounded-lg  ' />
                                      <div className='w-[70%]  outline-black outline-1 rounded-lg flex items-center pr-1.5'>
-                                       <input type={showPassword? "text" : "password"} placeholder='Password' className='text-gray-900 w-full  p-1.5  outline-none' />
+                                       <input type={showPassword? "text" : "password"} 
+                                              placeholder='Password' 
+                                              autoComplete='new-password'
+                                              onChange={(e)=>setPassword(e.target.value)}
+                                              className='text-gray-900 w-full  p-1.5  outline-none' />
                                        <button  type='button'
                                        onMouseDown={handlePressStart}
                                        onMouseUp={handlePressEnd}
