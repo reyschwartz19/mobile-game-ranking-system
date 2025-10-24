@@ -18,7 +18,7 @@ const Authentication = () =>{
     const [loading,setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const {session,signUp,signIn} = UserAuth();
+    const {signUp,signIn,googleSignIn} = UserAuth();
    
 
     const handleSignUp = async (e) =>{
@@ -60,6 +60,25 @@ const Authentication = () =>{
       }   //old code didnt work like sign up because with sign in supabse throws an error that goes to the catch block but sign up returns a resolved promise even on failure
     }
 
+    const hanldeGoogleSignIn = async (e) =>{
+      e.preventDefault();
+      setLoading(true);
+      setErrorMessage('');
+      try{
+            const result = await googleSignIn();
+            if(result.success){
+              console.log('Sign in succesful');
+             
+            }else{
+              setErrorMessage('Sign in Error, please try again');
+            }
+      }catch(error){
+           setErrorMessage(error.message || 'Sign in failed. Please try again.')
+      }finally{
+         setLoading(false);
+      }
+    }
+
     const handlePressStart = () =>{
         setShowPassword(true);
     };
@@ -88,7 +107,10 @@ const Authentication = () =>{
                             </button>
                                        
                             <div className="flex w-full gap-4 mb-10">
-                                <button className='flex h-[60px] shadow-2xl items-center justify-center rounded-lg w-[50%] text-2xl cursor-pointer bg-white'>
+                                <button className='flex h-[60px] shadow-2xl items-center justify-center rounded-lg w-[50%] text-2xl cursor-pointer bg-white hover:bg-[#3b7ec2]'
+                                 onClick={hanldeGoogleSignIn}
+                                 disabled = {loading}
+                                 >
                              <img src={gIcon} className='w-7 h-7'/>&nbsp;
                              <span>Google</span>
                                 </button>
@@ -156,7 +178,8 @@ const Authentication = () =>{
                                            <p>OR</p>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                       </div>
-                                       <button className='flex h-[40px] shadow-lg items-center justify-center rounded-lg w-[70%]  cursor-pointer bg-white mb-2.5'>
+                                       <button className='flex h-[40px] shadow-lg items-center justify-center rounded-lg w-[70%]  cursor-pointer bg-white mb-2.5'
+                                        onClick={hanldeGoogleSignIn}>
                              <img src={gIcon} className='w-7 h-7'/>&nbsp;
                              <span>Continue with Google</span>
                                 </button>
@@ -210,7 +233,8 @@ const Authentication = () =>{
                                            <p>OR</p>
                                            <hr className='flex-grow border-t border-gray-900'/>
                                       </div>
-                                       <button className='flex h-[40px] shadow-lg items-center justify-center rounded-lg w-[70%]  cursor-pointer bg-white mb-2.5'>
+                                       <button className='flex h-[40px] shadow-lg items-center justify-center rounded-lg w-[70%]  cursor-pointer bg-white mb-2.5'
+                                        onClick={hanldeGoogleSignIn}>
                              <img src={gIcon} className='w-7 h-7'/>&nbsp;
                              <span>Continue with Google</span>
                                 </button>

@@ -20,6 +20,20 @@ export const AuthContextProvider = ({children}) => {
     return{success: true, data};
 
   };
+ const googleSignIn = async()=>{
+    const{data,error} = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+        },
+    });
+    if(error){
+        console.error('Error with Google sign-in:', error);
+        return {success: false, error};
+    }
+    return {success: true, data};
+ }
+
   useEffect(()=>{
     supabase.auth.getSession().then(({data: {session}})=>{
         setSession(session);
@@ -59,7 +73,7 @@ const signOut = async()=>{
   }
 
  return(
-    <AuthContext.Provider value={{session,signUp,signOut,signIn}}>
+    <AuthContext.Provider value={{session,signUp,signOut,signIn,googleSignIn}}>
         {children}
     </AuthContext.Provider>
  )
