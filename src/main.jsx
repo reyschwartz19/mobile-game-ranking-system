@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: <ProvideRoute> <Dashboard/> </ProvideRoute>
+    element:  <Dashboard/> 
   },{
     path: '/confirm',
     element: <Confirm/>
