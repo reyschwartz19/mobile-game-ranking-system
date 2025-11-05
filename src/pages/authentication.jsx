@@ -52,6 +52,7 @@ const Authentication = () =>{
           setErrorMessage('Sign in failed, please check your credentials and try again.');
           console.log(errorMessage);
         }
+        
       }catch(error){
         setErrorMessage( error.message || 'Sign in failed. Please try again.' );
       }finally{
