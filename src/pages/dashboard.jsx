@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/Authcontext";
-import { Menu, Plus, Search, LayoutDashboard, Settings } from "lucide-react";
-import { useState } from "react";
+import { Menu, Plus, Search, LayoutDashboard, Settings,ChevronDown, ChevronUp  } from "lucide-react";
+import { useState, useContext, createContext } from "react";
 import { SideBarItem, SideBar } from "../components/sidebar";
+import { DropBar } from "../components/dropbar";
+import DashboardCards from "../components/dashboardCards";
+
+const DropBarContext = createContext();
 
 const Dashboard = () =>{
-
+    const [open, setOpen] = useState();
     const {session, signOut} = UserAuth();
     const navigate = useNavigate();
     const [select, setSelect] = useState('all');
@@ -35,18 +39,19 @@ const Dashboard = () =>{
  }
  return(
   <section className="w-full  bg-[#F9FAFB] font-roboto flex gap-4">
-    <aside>
+    <aside className="max-sm:hidden">
       <SideBar>
       <SideBarItem icon={<LayoutDashboard />} text="Dashboard" active={true} alert/>
       <SideBarItem icon={<Plus/>} text="New Tournament"/>
       <SideBarItem icon={<Settings />} text="Settings" alert/>
-
-  </SideBar>
+      </SideBar>
     </aside>
     <section className="w-full bg-[#F9FAFB] px-3 py-2">
-       <section className="w-full flex justify-between border-b-2 border-gray-300 pb-1.5">
-       
-        <p className="text-2xl font-bold text-gray-900">Tournaments</p>
+       <section className="w-full flex justify-between border-b-2 border-gray-300 pb-1.5 items-center">
+        <button className="sm:hidden" onClick={() => setOpen(curr => !curr)}>
+        {open ? <ChevronUp /> : <ChevronDown />}
+        </button>
+        <p className="text-2xl font-bold text-gray-900">Dashboard</p>
         <button className="flex gap-2 items-center text-[1.2rem] border-2 border-[#62b1ff] p-1.5 rounded-md text-[#62b1ff] hover:bg-[#62b1ff] hover:text-white cursor-pointer">
          <Plus />
          New
@@ -95,7 +100,7 @@ const Dashboard = () =>{
                    ${select==='completed'?'text-[#1A73E8] bg-[#1A73E8]/30': ''}  flex flex-col md:w-[22%] gap-2 text-center md:h-[180px] justify-center items-center`}
           onClick={handleCompleteSelect}>
            <span className="md:hidden">Completed</span>
-           <span className={`hidden md:inline text-xl text-gray-600`}>All tournaments</span>
+           <span className={`hidden md:inline text-xl text-gray-600`}>Completed tournaments</span>
            <span className="hidden md:inline text-2xl font-bold">6</span>
            <span className={`hidden md:inline ${select==='completed'?'text-white': 'text-gray-500'}`}>Finished Tournaments</span>
          </button>
