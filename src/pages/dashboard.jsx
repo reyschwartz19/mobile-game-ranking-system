@@ -68,10 +68,38 @@ const Dashboard = () =>{
            </div>
        </section>
        <section className="my-3 flex items-center justify-between">
-         <DashboardCards select={select} selectType={handleAllSelect} smTitle={'All'} mdtitle={'All tournaments'} number={'6'} description={'All Tournaments managed'}/>
-         <DashboardCards select={select} selectType={handleLiveSelect} smTitle={'Live'} mdtitle={'Live'} number={'3'} description={'Curretly Going On'}/>
-         <DashboardCards select={select} selectType={handleUpcomingSelect} smTitle={'Upcoming'} mdtitle={'Upcoming tournaments'} number={'4'} description={'Starting Soon'}/>
-         <DashboardCards select={select} selectType={handleCompleteSelect} smTitle={'Completed'} mdtitle={'Completed tournaments'} number={'4'} description={'Finished Tournaments'}/>
+         <DashboardCards
+          select={select} 
+          selectType={handleAllSelect} 
+          smTitle={'All'} 
+          mdtitle={'All tournaments'} 
+          number={'6'} 
+          description={'All Tournaments managed'} 
+          type={'all'}/>
+         <DashboardCards
+          select={select} 
+          selectType={handleLiveSelect} 
+          smTitle={'Live'} 
+          mdtitle={'Live'} 
+          number={'3'} 
+          description={'Curretly Going On'} 
+          type={'live'}/>
+         <DashboardCards
+          select={select} 
+          selectType={handleUpcomingSelect} 
+          smTitle={'Upcoming'} 
+          mdtitle={'Upcoming tournaments'} 
+          number={'4'} 
+          description={'Starting Soon'} 
+          type={'upcoming'}/>
+         <DashboardCards 
+         select={select} 
+         selectType={handleCompleteSelect} 
+         smTitle={'Completed'}
+         mdtitle={'Completed tournaments'}
+         number={'4'} 
+         description={'Finished Tournaments'} 
+         type={'completed'}/>
 
        </section>
     </section>
