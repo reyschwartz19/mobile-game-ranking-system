@@ -68,42 +68,11 @@ const Dashboard = () =>{
            </div>
        </section>
        <section className="my-3 flex items-center justify-between">
-         <button
-          className={`border-1 border-gray-300 px-4 py-1.5 rounded-md hover:bg-gray-100
-                   ${select==='all'?'text-[#1A73E8] bg-[#1A73E8]/30': ''}  flex flex-col md:w-[22%] gap-2 text-center md:h-[180px] justify-center items-center`}
-          onClick={handleAllSelect}>
-           <span className="md:hidden">All</span>
-           <span className={`hidden md:inline text-xl text-gray-600`}>All tournaments</span>
-           <span className="hidden md:inline text-2xl font-bold">6</span>
-           <span className={`hidden md:inline ${select==='all'?'text-white': 'text-gray-500'}`}>All Tournaments managed</span>
-         </button>
-          <button
-          className={`border-1 border-gray-300 px-4 py-1.5 rounded-md hover:bg-gray-100
-                   ${select==='live'?'text-[#1A73E8] bg-[#1A73E8]/30': ''}  flex flex-col md:w-[22%] gap-2 text-center md:h-[180px] justify-center items-center`}
-          onClick={handleLiveSelect}>
-           <span className="md:hidden">Live</span>
-           <span className={`hidden md:inline text-xl text-gray-600`}>Live</span>
-           <span className="hidden md:inline text-2xl font-bold">3</span>
-           <span className={`hidden md:inline ${select==='live'?'text-white': 'text-gray-500'}`}>Curretly Going On</span>
-         </button>
-           <button
-          className={`border-1 border-gray-300 px-4 py-1.5 rounded-md hover:bg-gray-100
-                   ${select==='upcoming'?'text-[#1A73E8] bg-[#1A73E8]/30': ''}  flex flex-col md:w-[22%] gap-2 text-center md:h-[180px] justify-center items-center`}
-          onClick={handleUpcomingSelect}>
-           <span className="md:hidden">Upcoming</span>
-           <span className={`hidden md:inline text-xl text-gray-600`}>Upcoming tournaments</span>
-           <span className="hidden md:inline text-2xl font-bold">6</span>
-           <span className={`hidden md:inline ${select==='upcoming'?'text-white': 'text-gray-500'}`}>Starting Soon</span>
-         </button>
-          <button
-          className={`border-1 border-gray-300 px-4 py-1.5 rounded-md hover:bg-gray-100
-                   ${select==='completed'?'text-[#1A73E8] bg-[#1A73E8]/30': ''}  flex flex-col md:w-[22%] gap-2 text-center md:h-[180px] justify-center items-center`}
-          onClick={handleCompleteSelect}>
-           <span className="md:hidden">Completed</span>
-           <span className={`hidden md:inline text-xl text-gray-600`}>Completed tournaments</span>
-           <span className="hidden md:inline text-2xl font-bold">6</span>
-           <span className={`hidden md:inline ${select==='completed'?'text-white': 'text-gray-500'}`}>Finished Tournaments</span>
-         </button>
+         <DashboardCards select={select} selectType={handleAllSelect} smTitle={'All'} mdtitle={'All tournaments'} number={'6'} description={'All Tournaments managed'}/>
+         <DashboardCards select={select} selectType={handleLiveSelect} smTitle={'Live'} mdtitle={'Live'} number={'3'} description={'Curretly Going On'}/>
+         <DashboardCards select={select} selectType={handleUpcomingSelect} smTitle={'Upcoming'} mdtitle={'Upcoming tournaments'} number={'4'} description={'Starting Soon'}/>
+         <DashboardCards select={select} selectType={handleCompleteSelect} smTitle={'Completed'} mdtitle={'Completed tournaments'} number={'4'} description={'Finished Tournaments'}/>
+
        </section>
     </section>
  </section>

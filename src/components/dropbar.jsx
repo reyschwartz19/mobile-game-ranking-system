@@ -8,8 +8,9 @@ export function DropBar({children}){
     return(
         <aside className="relative">
          <nav className="flex flex-col">
-            
+
          </nav>
         </aside>
     );
 }
+
