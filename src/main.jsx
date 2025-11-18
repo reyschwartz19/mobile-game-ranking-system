@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import Authentication from './pages/authentication.jsx';
-import Dashboard from './pages/dashboard.jsx';
+import {Dashboard} from './pages/dashboard.jsx';
 import Confirm from './pages/confirmationPage.jsx';
 import { AuthContextProvider } from './context/Authcontext.jsx';
 import ProvideRoute from './pages/PrivateRoute.jsx';
