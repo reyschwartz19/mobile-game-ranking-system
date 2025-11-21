@@ -7,7 +7,18 @@ export function SideBar  ({ children})  {
  const [expanded, setExpanded] = useState()
 
     return(
-        <aside className="h-screen">
+        <aside className={`
+    h-screen
+
+    sm:transition-all sm:duration-300
+
+    ${expanded
+      ? "sm:fixed sm:top-0 sm:left-0 sm:z-50 sm:w-auto"
+      : " sm:left-0 sm:top-0 sm:w-auto"
+    }
+
+    bg-white
+  `}>
         <nav className="h-full flex flex-col   shadow-sm">
         <div className="p-4 pb-2 flex justify-between items-center">
            <p className={`font-roboto text-2xl mb-1.5 text-gray-600  text-left

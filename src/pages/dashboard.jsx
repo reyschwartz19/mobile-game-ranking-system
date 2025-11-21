@@ -39,7 +39,7 @@ export const Dashboard = () =>{
  }
  return(
   <section className="w-full  bg-[#F9FAFB] font-roboto flex gap-4">
-    <aside className={`max-sm:hidden `}>
+    <aside className={`max-sm:hidden relative`}>
       <SideBar>
       <SideBarItem icon={<LayoutDashboard />} text="Dashboard" active={true} alert/>
       <SideBarItem icon={<Plus/>} text="New Tournament"/>

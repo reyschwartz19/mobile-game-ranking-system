@@ -3,7 +3,7 @@ import {Eye,EyeClosed } from 'lucide-react';
 import gIcon from '../assets/google-icon.svg';
 import {  useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
-import { UserAuth } from '../context/Authcontext';
+import { UserAuth } from '../context/Authcontext';                                                                                                
 import { useNavigate } from 'react-router-dom';
 
 const Authentication = () =>{
